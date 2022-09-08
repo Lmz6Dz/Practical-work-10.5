@@ -99,5 +99,10 @@ namespace Practical_work_10._5
                 System.Windows.Forms.MessageBox.Show("Выберите пользователя из таблицы", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            File.Delete(Path.Combine(Directory.GetCurrentDirectory(), Convert.ToString(_client.Bid)));
+        }
     }
 }

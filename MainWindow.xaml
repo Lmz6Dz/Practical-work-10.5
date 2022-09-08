@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Practical_work_10._5"
         mc:Ignorable="d"
-        Title="Телеграм Бот Облако" Height="600" Width="800" MinWidth="640" MinHeight="480">
+        Title="Телеграм Бот Облако" Height="600" Width="800" MinWidth="640" MinHeight="480" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

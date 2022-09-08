@@ -17,15 +17,18 @@ namespace Practical_work_10._5
     {
         private readonly MainWindow w;
 
-        private static readonly string Token = System.IO.File.ReadAllText(@"token");
-        public static readonly TelegramBotClient Bot = new(Token);
-        public static CancellationTokenSource Cts = new();
-        public long Bid = (long)Bot.BotId;
+        private readonly TelegramBotClient _bot;
+        private readonly CancellationTokenSource _cts;
+        public readonly long Bid;
 
         public ObservableCollection<MessageLog> BotMessageLog { get; set; }
 
         public TelegramMessageClient(MainWindow w)
         {
+            _bot = new TelegramBotClient(System.IO.File.ReadAllText(@"token"));
+            _cts = new CancellationTokenSource();
+            Bid = (long)_bot.BotId;
+
             this.BotMessageLog = new ObservableCollection<MessageLog>();
             this.w = w;
 
@@ -34,11 +37,11 @@ namespace Practical_work_10._5
                 AllowedUpdates = { }
             };
 
-            Bot.StartReceiving(
+            _bot.StartReceiving(
                 HandleUpdatesAsync,
                 HandleErrorAsync,
                 receiverOptions,
-                cancellationToken: Cts.Token);
+                cancellationToken: _cts.Token);
         }
 
         public Task HandleErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken cancellationToken)
@@ -54,12 +57,11 @@ namespace Practical_work_10._5
             {
                 ((MainWindow)System.Windows.Application.Current.MainWindow).TextBlockError.Text = errorMessage;
             });
-            
+
             return Task.CompletedTask;
         }
 
-        public async Task HandleUpdatesAsync(ITelegramBotClient bot, Update update,
-            CancellationToken cancellationToken)
+        public async Task HandleUpdatesAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
             if (update.Message != null)
             {
@@ -71,7 +73,7 @@ namespace Practical_work_10._5
                                 update.Message.Document.FileName, update.Message.Chat.Id);
                             await bot.SendTextMessageAsync(update.Message.Chat.Id,
                                 $"файл {update.Message.Document.FileName} загружен под именем {newName}",
-                                cancellationToken: Cts.Token);
+                                cancellationToken: _cts.Token);
                             break;
                         }
                     case MessageType.Audio:
@@ -79,7 +81,7 @@ namespace Practical_work_10._5
                             var newName = await DownLoad(update.Message.Audio.FileId, update.Message.Audio.FileName,
                                 update.Message.Chat.Id);
                             await bot.SendTextMessageAsync(update.Message.Chat.Id,
-                                $"файл {update.Message.Audio.FileName} загружен под именем {newName}", cancellationToken: Cts.Token);
+                                $"файл {update.Message.Audio.FileName} загружен под именем {newName}", cancellationToken: _cts.Token);
                             break;
                         }
                     case MessageType.Voice:
@@ -87,7 +89,7 @@ namespace Practical_work_10._5
                             var newName = await DownLoad(update.Message.Voice.FileId,
                                 $"{update.Message.Voice.FileId}.ogg", update.Message.Chat.Id);
                             await bot.SendTextMessageAsync(update.Message.Chat.Id,
-                                $" Загружено голосовое сообщение {update.Message.Voice.FileSize} байт под именем {newName}", cancellationToken: Cts.Token);
+                                $" Загружено голосовое сообщение {update.Message.Voice.FileSize} байт под именем {newName}", cancellationToken: _cts.Token);
                             break;
                         }
                     case MessageType.Photo:
@@ -95,7 +97,7 @@ namespace Practical_work_10._5
                             var newName = await DownLoad(update.Message.Photo.Last().FileId,
                                 $"{update.Message.Photo.Last().FileId}.jpg", update.Message.Chat.Id);
                             await bot.SendTextMessageAsync(update.Message.Chat.Id,
-                                $"Загружено изображение {update.Message.Photo.Last().FileSize} байт под именем {newName}", cancellationToken: Cts.Token);
+                                $"Загружено изображение {update.Message.Photo.Last().FileSize} байт под именем {newName}", cancellationToken: _cts.Token);
                             break;
                         }
                     case MessageType.Text:
@@ -108,7 +110,7 @@ namespace Practical_work_10._5
             }
         }
 
-        private static async Task<string> DownLoad(string fileId, string path, long directory)
+        private async Task<string> DownLoad(string fileId, string path, long directory)
         {
             if (!Directory.Exists($"{directory}")) Directory.CreateDirectory($"{directory}");
 
@@ -129,7 +131,7 @@ namespace Practical_work_10._5
 
             FileStream fs = new($"{directory}/" + fileName, FileMode.Create);
 
-            await Bot.DownloadFileAsync(Bot.GetFileAsync(fileId).Result.FilePath, fs);
+            await _bot.DownloadFileAsync(_bot.GetFileAsync(fileId).Result.FilePath, fs);
 
             fs.Close();
 
@@ -201,7 +203,7 @@ namespace Practical_work_10._5
 
         public void SendMessage(string text, string id, int mid)
         {
-            Bot.SendTextMessageAsync(Convert.ToInt64(id), text, replyToMessageId: mid);
+            _bot.SendTextMessageAsync(Convert.ToInt64(id), text, replyToMessageId: mid);
         }
     }
 }
