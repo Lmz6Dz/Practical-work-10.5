@@ -1,0 +1,92 @@
+﻿<Window x:Class="Practical_work_10._5.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Practical_work_10._5"
+        mc:Ignorable="d"
+        Title="Телеграм Бот Облако" Height="600" Width="800" MinWidth="640" MinHeight="480">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="453*"/>
+            <ColumnDefinition Width="122*"/>
+            <ColumnDefinition Width="225*"/>
+        </Grid.ColumnDefinitions>
+        <Menu
+            Grid.ColumnSpan="3"
+            Grid.Column="0"
+            FontSize="14"
+            Grid.Row="0"
+            Height="20" VerticalAlignment="Top" Background="White">
+            <MenuItem Header="Файл" >
+                <MenuItem Header="Список присланных файлов" Click="MenuItem_Click_3"/>
+                <MenuItem Header="Сохранение истории" Click="MenuItem_Click_1"/>
+                <MenuItem Header="Выход" Click="MenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="О программе" Click="MenuItem_Click_2"/>
+            </MenuItem>
+            <MenuItem Header="Выход" Click="MenuItem_Click"/>
+        </Menu>
+
+        <TextBox x:Name="TextBox"
+                 Grid.Column="2"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Padding="3"
+                 BorderThickness="1,1,1,1"
+                 FontSize="14"
+                 MinWidth="140"
+                 Margin="0,150,0,0" 
+                 AcceptsReturn="True"
+                 MaxHeight="100"
+                 Height="100"
+                 />
+
+        <TextBlock x:Name="TextBlockError"
+                   Grid.Column="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Height="80"
+                   MaxHeight="100"
+                   Padding="3"
+                   TextWrapping="WrapWithOverflow"
+                   MinWidth="100"
+                   Margin="0,330,0,0"/>
+
+        <TextBlock 
+                   Grid.Column="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Height="80"
+                   MaxHeight="100"
+                   Text="{Binding StringFormat=Отправить сообщение пользователю: {0}, ElementName=ViewList, Path=SelectedItem.FirstName}"
+                   Padding="3"
+                   TextWrapping="WrapWithOverflow"
+                   MinWidth="100"
+                   Margin="0,20,0,0"/>
+
+        <Button Content="Отправить"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Grid.Column="2"
+                Width="140"
+                FontSize="14" Click="Button_Click" Height="23" Margin="0,270,0,0"/>
+
+        <ListView x:Name="ViewList" 
+                  Grid.Column="0"
+                  Padding="3"
+                  BorderThickness="0,0,0,0" Margin="0,20,0,0" Grid.Row="0" HorizontalAlignment="Left">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="100" Header="Идентификатор" DisplayMemberBinding="{Binding Id}"/>
+                    <GridViewColumn Width="100" Header="Имя" DisplayMemberBinding="{Binding FirstName}"/>
+                    <GridViewColumn x:Name ="Msg" Width="100" Header="Сообщение" DisplayMemberBinding="{Binding Msg}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
